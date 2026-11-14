@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Côtes de Lumière | Vinhos Especiais</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/luxo.css">
+</head>
+<body class="bg-[#0D0907] text-stone-200 font-sans">
+    <section class="relative min-h-screen flex flex-col justify-between hero-bg" >
+        <header class="relative z-10 container mx-auto px-6 py-6 flex items-center justify-between">
+            <a href="/" class="brand-lockup flex items-center gap-3">
+                <img src="/imagens/logo.jpg" alt="Emblema Côtes de Lumière" class="w-11 h-11 object-contain">
+                <div>
+                    <h1 class="font-['Cormorant_Garamond'] text-xl font-semibold tracking-[0.16em] uppercase leading-none">CÔTES DE LUMIÈRE</h1>
+                    <p class="brand-caption">MAISON DE VINS · DEPUIS 1987</p>
+                </div>
+            </a>
+            <nav class="hidden md:flex items-center space-x-8 text-xs tracking-[0.16em] uppercase font-medium">
+                <a href="#produtos">Coleção</a>
+                <a href="#sobre">Nossa história</a>
+                <a href="#contato">Contato</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button onclick="openCartModal()" class="relative bg-amber-500/10 border border-amber-500/40 text-amber-300 hover:bg-amber-500 hover:text-black px-4 py-2 rounded-full text-xs font-semibold uppercase flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Carrinho</span>
+                    <span id="cart-counter" class="absolute -top-2 -right-2 bg-amber-500 text-black text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                </button>
+                <span class="cl-header-greeting text-xs sm:inline">Olá, <strong><%= usuario ? usuario.nome : 'Cliente' %></strong></span>
+                <a href="/logout" class="cl-header-logout text-xs border px-4 py-2 rounded-full uppercase font-semibold">Sair</a>
+            </div>
+        </header>
+
+        <div class="hero-copy relative z-10 w-full pl-8 md:pl-20 pr-6 py-16 flex-1 flex flex-col justify-center items-start">
+            <div class="hero-kicker"><span></span> O prazer de descobrir</div>
+            <h2 class="font-['Cormorant_Garamond']">
+                Vinhos que<br><em>iluminam momentos.</em>
+            </h2>
+            <p class="hero-description">Uma curadoria de vinhos extraordinários, escolhidos para transformar encontros em memórias inesquecíveis.</p>
+            <div class="hero-actions flex flex-wrap gap-4">
+                <a href="#produtos" class="hero-primary">Descobrir a coleção <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="#sobre" class="hero-secondary">Nossa história</a>
+            </div>
+            <div class="hero-signature"><span>01</span><i></i> Seleção · Origem · Experiência</div>
+        </div>
+        <div class="hero-side-note" aria-hidden="true">L’ART DE VIVRE LE VIN</div>
+    </section>
+
+    <!-- SECÇÃO DE PRODUTOS E FILTROS -->
+    <section id="produtos" class="cl-collection-section py-20 container mx-auto px-6 max-w-7xl">
+        <div class="text-center mb-12">
+            <h3 class="font-['Cormorant_Garamond'] text-4xl text-white font-bold uppercase mb-2">Nossos Vinhos</h3>
+            <p class="font-['Cormorant_Garamond'] italic text-xl text-amber-300">Filtre por uva, safra, região ou disponibilidade</p>
+        </div>
+
+        <!-- BARRA DE FILTROS -->
+        <form action="/home#produtos" method="GET" class="bg-[#16100C] p-6 rounded-2xl gold-border mb-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 items-end shadow-xl">
+            <div>
+                <label class="block text-[10px] text-amber-400 uppercase tracking-widest mb-1.5 font-semibold">Uva</label>
+                <select name="uva" class="w-full bg-black/70 border border-amber-500/30 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                    <option value="">Todas as Uvas</option>
+                    <% uvas.forEach(u => { %>
+                        <option value="<%= u.uva %>" <%= filtros.uva === u.uva ? 'selected' : '' %>><%= u.uva %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] text-amber-400 uppercase tracking-widest mb-1.5 font-semibold">Safra / Ano</label>
+                <select name="ano" class="w-full bg-black/70 border border-amber-500/30 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                    <option value="">Todas as Safras</option>
+                    <% anos.forEach(a => { %>
+                        <option value="<%= a.ano %>" <%= filtros.ano === a.ano ? 'selected' : '' %>><%= a.ano %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] text-amber-400 uppercase tracking-widest mb-1.5 font-semibold">Região</label>
+                <select name="regiao" class="w-full bg-black/70 border border-amber-500/30 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                    <option value="">Todas as Regiões</option>
+                    <% regioes.forEach(r => { %>
+                        <option value="<%= r.regiao %>" <%= filtros.regiao === r.regiao ? 'selected' : '' %>><%= r.regiao %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-[10px] text-amber-400 uppercase tracking-widest mb-1.5 font-semibold">Estoque</label>
+                <select name="estoque" class="w-full bg-black/70 border border-amber-500/30 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-amber-400">
+                    <option value="">Todos</option>
+                    <option value="disponivel" <%= filtros.estoque === 'disponivel' ? 'selected' : '' %>>Disponíveis</option>
+                    <option value="esgotado" <%= filtros.estoque === 'esgotado' ? 'selected' : '' %>>Esgotados</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="submit" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg">
+                    Filtrar
+                </button>
+                <a href="/home#produtos" class="px-4 py-3 bg-black/60 border border-amber-500/30 hover:border-amber-400 text-amber-300 font-bold text-xs rounded-xl flex items-center justify-center transition-all" title="Limpar Filtros">
+                    <i class="fa-solid fa-rotate-left"></i>
+                </a>
+            </div>
+        </form>
+
+        <div class="wine-carousel">
+            <% if (produtos.length === 0) { %>
+                <p class="text-center text-stone-400 py-10 w-full">Nenhum vinho encontrado com os filtros selecionados.</p>
+            <% } else { %>
+                <% produtos.forEach(wine => { %>
+                    <div class="cl-wine-card bg-[#16100C] rounded-2xl p-6 gold-border flex flex-col justify-between cursor-pointer group hover:border-amber-400 transition-all shadow-xl relative" data-wine="<%= encodeURIComponent(JSON.stringify(wine)) %>" onclick="openWineDetails(JSON.parse(decodeURIComponent(this.dataset.wine)))">
+                        <div>
+                            <div class="h-64 rounded-xl overflow-hidden mb-6 relative bg-black/50 flex items-center justify-center">
+                                <img src="/<%= wine.imagem %>" alt="<%= wine.title %>" class="object-cover h-full w-full group-hover:scale-105 transition-transform duration-500">
+                                <span class="absolute top-3 right-3 bg-amber-500 text-black text-xs font-bold px-3 py-1 rounded-full"><%= wine.ano %></span>
+                                <% if (wine.estoque <= 0) { %>
+                                    <span class="absolute top-3 left-3 bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Esgotado</span>
+                                <% } else { %>
+                                    <span class="absolute top-3 left-3 bg-emerald-600/90 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase">Estoque: <%= wine.estoque %></span>
+                                <% } %>
+                            </div>
+                            <span class="text-[10px] text-amber-500 uppercase font-semibold block mb-1"><%= wine.regiao %> • <%= wine.uva %></span>
+                            <h4 class="font-['Cormorant_Garamond'] text-2xl text-white font-bold my-2 uppercase"><%= wine.title %></h4>
+                            <p class="text-stone-300 text-xs mb-4 line-clamp-2"><%= wine.descricao %></p>
+                        </div>
+                        <div class="flex items-center justify-between border-t border-amber-500/20 pt-4">
+                            <span class="font-['Cormorant_Garamond'] text-2xl font-bold text-amber-300"><%= wine.precoFormatado %></span>
+                            <span class="cl-details-button bg-amber-500/10 text-amber-300 text-xs font-semibold px-4 py-2 rounded-lg border border-amber-500/40 uppercase">Detalhes</span>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- NOSSA HISTÓRIA -->
+    <section id="sobre" class="about-section">
+        <div class="about-orbit" aria-hidden="true"></div>
+        <div class="about-inner">
+            <div class="about-image">
+                <div class="about-image-frame">
+                    <img class="about-logo-image" src="/imagens/logo.jpg" alt="Emblema Côtes de Lumière">
+                    <span class="about-image-caption">L’ESPRIT DU TERROIR</span>
+                </div>
+                <div class="about-stamp"><span>Depuis</span><strong>1987</strong><i>Art de vivre</i></div>
+            </div>
+            <div class="about-copy">
+                <div class="section-eyebrow"><span></span> Nossa essência</div>
+                <h3>Mais do que vinho.<br><em>Uma forma de sentir.</em></h3>
+                <p>A CÔTES DE LUMIÈRE nasceu da paixão por descobrir lugares, pessoas e histórias através do vinho. Acreditamos que cada garrafa guarda a expressão de um terroir, o cuidado de quem produz e a beleza dos momentos compartilhados.</p>
+                <p>Por isso, reunimos rótulos de personalidade e qualidade excepcional em uma curadoria feita para quem aprecia os detalhes — da primeira descoberta ao último brinde.</p>
+                <a href="#contato" class="about-link">Conheça a nossa essência <i class="fa-solid fa-arrow-right"></i></a>
+                <div class="about-values">
+                    <div><strong>01</strong><span>Curadoria<br>criteriosa</span></div>
+                    <div><strong>02</strong><span>Origens<br>singulares</span></div>
+                    <div><strong>03</strong><span>Momentos<br>memoráveis</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODAL DE DETALHES -->
+    <div id="wine-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="cl-detail-modal-panel bg-[#16100C] gold-border rounded-3xl w-full p-8 relative text-stone-200 shadow-2xl">
+            <button onclick="closeWineModal()" class="absolute top-6 right-6 text-stone-400 hover:text-amber-300 text-2xl">&times;</button>
+            <div id="modal-content" class="cl-wine-detail-grid grid gap-8 items-start"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DO CARRINHO -->
+    <div id="cart-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-[#16100C] gold-border rounded-3xl max-w-lg w-full p-8 relative text-stone-200 shadow-2xl space-y-6">
+            <button onclick="closeCartModal()" class="absolute top-6 right-6 text-stone-400 hover:text-amber-300 text-2xl">&times;</button>
+            <h3 class="font-['Cormorant_Garamond'] text-3xl font-bold text-white uppercase border-b border-amber-500/20 pb-4">Seu Carrinho</h3>
+            <div id="cart-items-container" class="space-y-4 max-h-60 overflow-y-auto pr-2">
+                <p class="text-stone-400 text-xs text-center py-6">O seu carrinho está vazio.</p>
+            </div>
+            <div class="border-t border-amber-500/20 pt-4 flex justify-between items-center text-lg font-bold text-amber-300">
+                <span>Total:</span>
+                <span id="cart-total">R$ 0,00</span>
+            </div>
+            <button onclick="closeCartModal()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-black font-bold uppercase tracking-widest text-xs rounded-xl transition-all shadow-lg">
+                Continuar comprando
+            </button>
+        </div>
+    </div>
+
+    <footer id="contato" class="bg-[#16100C] border-t border-amber-500/30 pt-16 pb-12">
+        <div class="container mx-auto px-6 max-w-7xl grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+            <div>
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="/imagens/logo.jpg" alt="Logo" class="w-8 h-8 object-contain rounded-full border border-amber-500/50">
+                    <h4 class="font-['Cormorant_Garamond'] text-lg font-bold text-white tracking-widest uppercase">CÔTES DE LUMIÈRE</h4>
+                </div>
+                <p class="text-xs text-stone-400 leading-relaxed">
+                    Vinhos refinados e selecionados diretamente dos melhores vinhedos. Iluminando momentos inesquecíveis.
+                </p>
+            </div>
+
+            <div>
+                <h5 class="text-xs text-amber-400 uppercase font-bold tracking-widest mb-4">Informações de Contato</h5>
+                <ul class="space-y-3 text-xs text-stone-300">
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-location-dot text-amber-400"></i> Bordeaux, França & Vale dos Vinhedos, Brasil</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-envelope text-amber-400"></i> contato@cotesdelumiere.com</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-phone text-amber-400"></i> +55 (11) 98765-4321</li>
+                    <li class="flex items-center gap-3"><i class="fa-solid fa-clock text-amber-400"></i> Seg - Sáb: 09h às 20h</li>
+                </ul>
+            </div>
+
+            <div>
+                <h5 class="text-xs text-amber-400 uppercase font-bold tracking-widest mb-4">Redes & Atendimento</h5>
+                <p class="text-xs text-stone-400 mb-4">Siga nossas redes sociais ou envie uma mensagem direta para agendamento de degustação.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-9 h-9 rounded-full bg-black/60 border border-amber-500/40 flex items-center justify-center text-amber-400 hover:bg-amber-500 hover:text-black transition-all"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-black/60 border border-amber-500/40 flex items-center justify-center text-amber-400 hover:bg-amber-500 hover:text-black transition-all"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-black/60 border border-amber-500/40 flex items-center justify-center text-amber-400 hover:bg-amber-500 hover:text-black transition-all"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-amber-500/10 container mx-auto px-6 pt-6 text-center text-[11px] text-stone-500">
+            &copy; <%= new Date().getFullYear() %> Côtes de Lumière. Todos os direitos reservados.
+        </div>
+    </footer>
+
+    <script>
+        let carrinho = [];
+        let vinhoSelecionado = null;
+        let quantidadeDetalhes = 1;
+        const moedaBR = valor => Number(valor || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+        function atualizarQuantidadeDetalhes(delta) {
+            if (!vinhoSelecionado) return;
+            const limite = Math.max(0, Number(vinhoSelecionado.estoque) || 0);
+            const jaNoCarrinho = carrinho.filter(item => String(item.id) === String(vinhoSelecionado.id)).length;
+            const disponivel = Math.max(0, limite - jaNoCarrinho);
+            quantidadeDetalhes = Math.max(1, Math.min(Math.max(1, disponivel), quantidadeDetalhes + delta));
+            document.getElementById('cl-detail-qty-value').textContent = quantidadeDetalhes;
+            document.getElementById('cl-detail-subtotal').textContent = moedaBR(Number(vinhoSelecionado.preco) * quantidadeDetalhes);
+            document.getElementById('cl-detail-minus').disabled = quantidadeDetalhes <= 1;
+            document.getElementById('cl-detail-plus').disabled = quantidadeDetalhes >= disponivel;
+            const adicionarBtn = document.getElementById('cl-detail-add-button');
+            if (adicionarBtn) adicionarBtn.disabled = disponivel === 0;
+        }
+        function adicionarQuantidadeSelecionada() {
+            if (!vinhoSelecionado) return;
+            adicionarAoCarrinho(vinhoSelecionado, quantidadeDetalhes);
+        }
+
+        function openWineDetails(wine) {
+            const modal = document.getElementById('wine-modal');
+            const content = document.getElementById('modal-content');
+            const isEsgotado = Number(wine.estoque) <= 0;
+            vinhoSelecionado = wine;
+            quantidadeDetalhes = 1;
+            content.innerHTML = `
+                <div class="cl-detail-image relative rounded-2xl overflow-hidden gold-border flex items-center justify-center">
+                    <img src="/${wine.imagem}" alt="${wine.title}" class="object-cover h-full w-full">
+                    <span class="absolute top-4 right-4 cl-detail-year text-xs font-bold px-3 py-1 rounded-full">${wine.ano}</span>
+                </div>
+                <div class="cl-detail-info space-y-4">
+                    <div>
+                        <span class="cl-detail-kicker text-[10px] uppercase font-semibold block mb-1">${wine.regiao} · ${wine.uva}</span>
+                        <h3 class="cl-detail-title font-['Cormorant_Garamond'] text-3xl font-bold uppercase mb-2">${wine.title}</h3>
+                        <p class="cl-detail-price font-['Cormorant_Garamond'] text-3xl font-bold">${wine.precoFormatado}</p>
+                    </div>
+                    <div class="cl-detail-facts">
+                        <div><i class="fa-solid fa-grapes"></i><small>Uva</small><strong>${wine.uva}</strong></div>
+                        <div><i class="fa-regular fa-calendar"></i><small>Ano</small><strong>${wine.ano}</strong></div>
+                        <div><i class="fa-solid fa-location-dot"></i><small>Região</small><strong>${wine.regiao}</strong></div>
+                        <div><i class="fa-solid fa-box"></i><small>Estoque</small><strong>${wine.estoque} un.</strong></div>
+                        <div><i class="fa-solid fa-percent"></i><small>Teor alcoólico</small><strong>${wine.teorAlcoolico || '14,5%'}</strong></div>
+                    </div>
+                    <div class="cl-detail-notes">
+                        <h5><i class="fa-solid fa-wine-glass"></i> Notas do sommelier</h5>
+                        <p>${wine.descricao}</p>
+                    </div>
+                    ${isEsgotado ? '' : `<div class="cl-detail-purchase">
+                        <div class="cl-detail-quantity"><span>Quantidade</span><div class="cl-qty-controls">
+                          <button id="cl-detail-minus" type="button" onclick="atualizarQuantidadeDetalhes(-1)" aria-label="Diminuir quantidade" disabled>−</button>
+                          <strong id="cl-detail-qty-value">1</strong>
+                          <button id="cl-detail-plus" type="button" onclick="atualizarQuantidadeDetalhes(1)" aria-label="Aumentar quantidade">+</button>
+                        </div></div>
+                        <div class="cl-detail-subtotal"><span>Subtotal</span><strong id="cl-detail-subtotal">${moedaBR(wine.preco)}</strong></div>
+                    </div>`}
+                    <div class="cl-detail-actions">
+                      ${isEsgotado ? '<button disabled class="cl-detail-add" style="opacity:.55">Produto esgotado</button>' : `<button type="button" id="cl-detail-add-button" onclick="adicionarQuantidadeSelecionada()" class="cl-detail-add"><i class="fa-solid fa-cart-shopping"></i> Adicionar ao carrinho</button>`}
+                      <button onclick="closeWineModal()" class="cl-detail-continue">Continuar comprando</button>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            document.body.classList.add('cl-modal-open');
+            if (!isEsgotado) atualizarQuantidadeDetalhes(0);
+        }
+
+        function closeWineModal() { document.getElementById('wine-modal').classList.add('hidden'); document.body.classList.remove('cl-modal-open'); }
+
+        function openCartModal() {
+            atualizarCarrinhoModal();
+            document.getElementById('cart-modal').classList.remove('hidden');
+        }
+
+        function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
+
+        function adicionarAoCarrinho(wine, quantidade = 1) {
+            const limite = Math.max(0, Number(wine.estoque) || 0);
+            const noCarrinho = carrinho.filter(item => String(item.id) === String(wine.id)).length;
+            const disponivel = Math.max(0, limite - noCarrinho);
+            const adicionar = Math.min(Math.max(1, Number(quantidade) || 1), disponivel);
+            if (!adicionar) { alert('Você já adicionou a quantidade disponível em estoque.'); return; }
+            for (let i = 0; i < adicionar; i++) carrinho.push(wine);
+            atualizarContadorCarrinho();
+            closeWineModal();
+            if (adicionar < quantidade) alert(`Foram adicionadas ${adicionar} unidades: limite do estoque atingido.`);
+            else openCartModal();
+        }
+
+        function atualizarContadorCarrinho() {
+            document.getElementById('cart-counter').innerText = carrinho.length;
+        }
+
+        function atualizarCarrinhoModal() {
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total');
+            
+            if (carrinho.length === 0) {
+                container.innerHTML = '<p class="text-stone-400 text-xs text-center py-6">O seu carrinho está vazio.</p>';
+                totalEl.innerText = 'R$ 0,00';
+                return;
+            }
+
+            let html = '';
+            let total = 0;
+            carrinho.forEach((item, index) => {
+                total += Number(item.preco) || 0;
+                html += `
+                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-amber-500/20 text-xs">
+                        <div>
+                            <p class="font-bold text-white">${item.title}</p>
+                            <p class="text-amber-300">${item.precoFormatado}</p>
+                        </div>
+                        <button onclick="removerDoCarrinho(${index})" class="text-red-400 hover:text-red-300 p-1"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            totalEl.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
+
+        function removerDoCarrinho(index) {
+            carrinho.splice(index, 1);
+            atualizarContadorCarrinho();
+            atualizarCarrinhoModal();
+        }
+    </script>
+</body>
+</html>
